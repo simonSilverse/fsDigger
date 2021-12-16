@@ -3,6 +3,7 @@
 pkName=fsDigger;
 folder_build=build;
 mkdir --parents $folder_build
+echo "build_dir=$folder_build"
 
 perl -p \
 -e 's/ (write\s?\()/ fsDigger_$1/;' \
@@ -43,4 +44,4 @@ g++ -Wall \
 ./coreutils/lib/libcoreutils.a	\
 ./coreutils/src/libver.a
 
-echo "build_dir=$folder_build"
+echo "Build complete..."

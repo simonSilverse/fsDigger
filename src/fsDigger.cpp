@@ -263,10 +263,9 @@ public:
 
 					index_sector_fsi1 += slice1_variance;
 					index_sector_fsi2 += slice2_variance;
-					fsi_sectorLen = index_sector_fsi2 - index_sector_fsi1;
 					backup_lessNum = index_sector_fsi2;
 
-					logHelper_	<< endl << "\tSector difference = " << fsi_sectorLen
+					logHelper_	<< endl << "\tSector difference = " << get_fsi_sectorLen()
 								<< endl << "\tMatching:"
 								<< endl << logHelper_.chunk(
 												charConverter_.toHex(cmp2_char_array,cmpSize)
@@ -288,6 +287,8 @@ public:
 		ulong skip_sector_fsi1;
 		ulong skip_sector_fsi2;
 		bool hasExceededLen;
+
+		fsi_sectorLen = get_fsi_sectorLen();
 		fsip_specimen fsip_specimen_(fsi_sectorLen + rootLen_plus);
 
 		make_dd_argv_fixed(argv2);
@@ -684,6 +685,10 @@ public:
 		if(DD_STDOUT_FILENO==-1){
 			throw fsDigger_err(fsDigger_err::ERR_DD_DIR);
 		}
+	}
+
+	ulong get_fsi_sectorLen(){
+		return index_sector_fsi2 - index_sector_fsi1;
 	}
 
 	static char* const& getRef_p_imageSlice_char(){
