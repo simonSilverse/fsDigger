@@ -70,6 +70,8 @@ public:
 		try{
 			dd_if_sectorMax_hd();
 			dd_stdout_hd();
+			make_dd_argv_fixed(argv1);
+			make_dd_argv_fixed(argv2);
 
 			switch(mode){
 				case 1 :
@@ -143,8 +145,6 @@ public:
 		th_fsDigger_progress_.set_dd_bs(dd_bs);
 		th_fsDigger_progress_.logHelper_.minLvl = logHelper_.minLvl;
 		th_fsDigger_progress_.ini();
-		make_dd_argv_fixed(argv1);
-		make_dd_argv_fixed(argv2);
 		if(pickSlice_hd()==0){
 			return 0;
 		}
@@ -289,7 +289,10 @@ public:
 		bool hasExceededLen;
 
 		fsi_sectorLen = get_fsi_sectorLen();
-		fsip_specimen fsip_specimen_(fsi_sectorLen + rootLen_plus);
+		if(fsi_sectorLen==0){
+			throw fsDigger_err(fsDigger_err::ERR_FSI_LENGTH);
+		}
+		fsDigger_specimen fsDigger_specimen_(fsi_sectorLen + rootLen_plus);
 
 		make_dd_argv_fixed(argv2);
 		if(fsi_sectorLen>dd_countMax){
@@ -306,7 +309,7 @@ public:
 		logHelper_.out_hd(1);
 
 		// Starting from 2nd sector of specimen since first matching has already been found. 
-		for(i=1; i<fsip_specimen_.get_size(); i+=dd_count){
+		for(i=1; i<fsDigger_specimen_.get_size(); i+=dd_count){
 			skip_sector_fsi1 = i + index_sector_fsi1;
 			skip_sector_fsi2 = i + index_sector_fsi2;
 			
@@ -319,21 +322,21 @@ public:
 			dd_arg_dyn_hd(argv2,skip_sector_fsi2,dd_count);
 			dd_hd(dd_argc_exam,argv2,imageSlice2_char_array);
 
-			hasExceededLen = cmpSpecimenDiff(skip_sector_fsi1,fsip_specimen_);
+			hasExceededLen = cmpSpecimenDiff(skip_sector_fsi1,fsDigger_specimen_);
 			if(hasExceededLen){
 				break;
 			}
 		}
 
 		logHelper_	<< "Number of different sectors in " << cmpSize  << " bytes"
-					<< " = " << fsip_specimen_.get_len()
+					<< " = " << fsDigger_specimen_.get_len()
 					<< endl << "Sectors different:"
-					<< endl << '\t' << fsip_specimen_.chunk(&logHelper_,10)
+					<< endl << '\t' << fsDigger_specimen_.chunk(&logHelper_,10)
 					<< endl;
 		logHelper_.out_hd(1);
 	}
 
-	int cmpSpecimenDiff(ulong sectorNum, fsip_specimen& fsip_specimen_){
+	int cmpSpecimenDiff(ulong sectorNum, fsDigger_specimen& fsDigger_specimen_){
 		static ulong n;
 		static char cmp1_char_array[cmpSize];
 		static char cmp2_char_array[cmpSize];
@@ -355,8 +358,8 @@ public:
 
 			if(memcmp(cmp1_char_array,cmp2_char_array,cmpSize)!=0){
 				sectorNum2 = sectorNum + fsi_sectorLen;
-				fsip_specimen_.append(sectorNum,sectorNum2);
-				fsip_specimen_.regex_hd(cmp2_char_array,sectorNum2,&logHelper_);
+				fsDigger_specimen_.append(sectorNum,sectorNum2);
+				fsDigger_specimen_.regex_hd(cmp2_char_array,sectorNum2,&logHelper_);
 				if(toBackup&&sectorNum<backup_lessNum){
 					backupDir = backupDir_hd();
 					backupFileName = backupDir + "/" + to_string(sectorNum) + ".fsip.img";
@@ -399,7 +402,7 @@ public:
 	}
 
 	string backupDir_hd(){
-		static char tempDir[] = "fsip-XXXXXX";
+		static char tempDir[] = "fsDigger-XXXXXX";
 		static bool isCreated = false;
 
 		if(isCreated){
@@ -489,7 +492,7 @@ public:
 		 * This is just a tentative decision.
 		 * Determination factors include:
 		 * 		-Time to read through directory class usage.
-		 * 		-Scripting out with Basg might be an alternative option.
+		 * 		-Scripting out with Bash might be an alternative option.
 		 */
 	}
 
@@ -744,7 +747,7 @@ void fsDigger_finish_up(void){
 	/*
 	 * 
 	 * Appearantly not necessary most likely due to workings of C vs CPP compilers.
-	 * Enabling it will cause error at part oe execution.
+	 * Enabling it will cause error at part of execution.
 	 * Anyways, resources will be automatically freed at end of program.
 	 * 
 	 * static char* const& p_imageSlice_char = fsDigger::getRef_p_imageSlice_char();

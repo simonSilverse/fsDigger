@@ -19,6 +19,7 @@ public:
 		,EXCEEDED_SECTOR_SLICE2 = 3
 		,ERR_BACKUP_DIR = 4
 		,ERR_DD_DIR = 5
+		,ERR_FSI_LENGTH = 6
 		,ERR_FROM_DD = 50
 		,BAD_REG = 70
 		,UNKNOWN = 99
@@ -57,10 +58,14 @@ public:
 			case ERR_FROM_DD:
 				logHelper_	<< "An error has occured from fsDigger_static_compiled_dd.";
 				break;
+			case ERR_FSI_LENGTH:
+				logHelper_	<< "Invalid length between fsi1 and fsi2";
+				break;	
 			case BAD_REG:
 				logHelper_	<< "Regular expression badly formed."
 							<< endl << info;
 				break;
+			
 			case UNKNOWN:
 				logHelper_	<< "Unknown error has occured.";
 				break;

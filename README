@@ -17,13 +17,13 @@ fsDigger is the abbreviation form of 'Filesystem Digger'.
 ***Historical details***
 Initially, this was built to fix a corrupted microSD card I owned.
 More specifically meant to correct the filesystem information in
-the FAT filesystem. The existing 'dosfstools' tool did not solve
+the FAT filesystem. The existing 'dosfstools' package did not solve
 the problem I was facing and seems to be limited to repairing of
 just the boot sector.
 
 Hence, I decided to come up with this program as my first
 open source software available publicly via GitHub. This works out
-well as part of a career portfolio at the same time contributing
+well as part of project portfolio at the same time contributing
 to the community. During the coding phrase the usage of the program
 turns out it possibly can be used more generically on a wider
 context rather than just the FAT filesystem.
@@ -31,10 +31,10 @@ context rather than just the FAT filesystem.
 
 ***Technical details***
 The code logic is formed in a way which tries to discover filesystem
-information by comparing 2 block of data in an image, thus the
+information by comparing 2 blocks of data in an image, thus the
 naming of this program. The software is coded with performance
 optimization into consideration also keeping in mind the design
-for ease of maintanability and scalability. See build for morr info.
+for ease of maintanability and scalability. See build for more info.
 
 
 ***Dependencies***
@@ -53,10 +53,10 @@ The build procees is made as automated as possbile to what
 knowledge I have currently.
 
 For now, $cd into coreutils and again make sure to build the
-package first. It has its own build instruction so I will
-leave it outside of this section. Return to fsDugger root
+package first. It has its own build instructions so I will
+leave it outside of this section. Return to fsDigger root
 directory after building of the coreutils package. Run the
-'build.sh' script and the build should complete w/o problem.
+'build.sh' script and build should complete w/o problem.
 Note that 'dd' will be compiled as a modified cource code
 by the script. Build has been done successfully on Linux/Debian
 distrubution buster suite.
@@ -69,8 +69,8 @@ is already in an unusable state. Moreover, the software has
 a backup option to save the existing bad data to an image file
 before trying to make any changes to that particular data in the
 device. So, a restore (not implemented yet) can be done if the
-modification did not solve a corrupted issue.Naturally, an encrypted
-media device will surely be unfixable by this software.
+modification did not solve a corrupted issue. Naturally, an
+encrypted media device will surely be unfixable by this software.
 
 
 ***FAQ***

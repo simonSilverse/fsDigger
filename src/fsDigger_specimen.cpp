@@ -3,28 +3,29 @@
 #include "../includes/logHelper.cpp"
 #include "../includes/regexBox.cpp"
 
-class fsip_specimen{
+class fsDigger_specimen{
 	int index = 0;
 	ulong size;
 
 	ulong* fsi1_sector_array;
 	ulong* fsi2_sector_array;
 	int* fsi2_matched_array;
-	inline static string regex_rootPattern = "android|auto|backup|boot" \
-											"|efi|ini|lost|readme|recycle" \
-											"|sync|system|trash|user";;
-	inline static int regex_outputNonMatching = 0;
 
 public:
-	fsip_specimen() = delete;
+	inline static int regex_outputNonMatching = 0;
+	inline static string regex_rootPattern = "android|auto|backup|boot" \
+											"|efi|ini|lost|readme|recycle" \
+											"|sync|system|trash|user";
 
-	fsip_specimen(ulong size){
+	fsDigger_specimen() = delete;
+
+	fsDigger_specimen(ulong size){
 		this->size = size;
 		fsi1_sector_array = new ulong[size];
 		fsi2_sector_array = new ulong[size];
 	}
 
-	~fsip_specimen(){
+	~fsDigger_specimen(){
 		delete fsi1_sector_array;
 		delete fsi2_sector_array;
 	}
@@ -39,14 +40,6 @@ public:
 		index++;
 
 		return index;
-	}
-
-	static void set_regex_rootPattern(string str_){
-		regex_rootPattern = str_;
-	}
-
-	static void set_regex_outputNonMatching(int int_){
-		regex_outputNonMatching = int_;
 	}
 
 	void regex_hd(const char cmp_char_array[], int spec2sectorNum, logHelper* const logHelper_){

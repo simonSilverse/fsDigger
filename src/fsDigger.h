@@ -5,10 +5,10 @@
 #ifdef __cplusplus
 	extern "C" {
 	class fsDigger;
-	class fsip_specimen;
+	class fsDigger_specimen;
 #else
 	typedef struct fsDigger fsDigger;
-	typedef struct fsip_specimen fsip_specimen;
+	typedef struct fsDigger_specimen fsDigger_specimen;
 #endif
 	//	typedef unsigned long uLong;
 	int dd_main(int argc, char **argv);

@@ -25,12 +25,12 @@ static struct argp_option argp_option_[] = {
 		"\n3 = Compare difference between 2 FSI. " \
 			"\n\tRuns w/o exam mode prior execution. " \
 		"\n4 = Search for last not null sector. " \
-		"\n5 = Create an image starting from 1st FSI to last not null sector. " \
-		"\n6 = Create an image starting from 1st FSI to last not null sector. " \
+		"\n5 = Create an image starting from '--fsi1' to last not null sector. " \
+		"\n6 = Create an image starting from '--fsi1' to last not null sector. " \
 			"\n\tRuns w/o exam mode prior execution. "
 	}
 	,{"offset",'o',"4",OPTION_ARG_OPTIONAL
-		,"Specify number of sector to start from. " \
+		,"Specify sector number to start from. " \
 		"\nExam mode applicable."
 	}
 	,{"skip",'s',"4",OPTION_ALIAS}
@@ -104,12 +104,10 @@ static error_t option_parser(int key, char* argv, struct argp_state* argp_state_
 			ss_ >> fsDigger::p_self->rootLen_plus;
 			break;
 		case 'p' :
-			fsip_specimen::set_regex_rootPattern(ss_.str());
+			ss_ >> fsDigger_specimen::regex_rootPattern;
 			break;
 		case 'n' :
-			int i;
-			ss_ >> i;
-			fsip_specimen::set_regex_outputNonMatching(i);
+			ss_ >> fsDigger_specimen::regex_outputNonMatching;
 			break;
 		case 'b' :
 			ss_ >> fsDigger::p_self->toBackup;

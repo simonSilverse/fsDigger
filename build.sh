@@ -44,4 +44,4 @@ g++ -Wall \
 ./coreutils/lib/libcoreutils.a	\
 ./coreutils/src/libver.a
 
-echo "Build complete..."
+echo "Build completed..."
