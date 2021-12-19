@@ -2,7 +2,7 @@
 
 pkName=fsDigger;
 folder_build=build;
-mkdir --parents $folder_build
+mkdir --parents $folder_build coreutils/$folder_build
 echo "build_dir=$folder_build"
 
 perl -p \

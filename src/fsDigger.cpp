@@ -632,7 +632,7 @@ public:
 			this->shared_multiplier = shared_multiplier;
 			logHelper_	<< "More resources to be allocated by dd, setting shared_multiplier = " << shared_multiplier
 						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(0);
 		}
 	}
 
@@ -685,8 +685,9 @@ public:
 			dd_stdout
 			, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG // O_SYNC
 		);
+
 		if(DD_STDOUT_FILENO==-1){
-			throw fsDigger_err(fsDigger_err::ERR_DD_DIR);
+			throw fsDigger_err(fsDigger_err::ERR_DD_FILE);
 		}
 	}
 
@@ -709,12 +710,13 @@ public:
 			logHelper_	<< endl << "argv[" << i << "] addr = " << (argv + i)
 						<< endl << "argv[" << i << "] val = " << *(argv + i)
 						<< endl;
-						
+
 			if(toCombine){
 				string_ += " " ;
 				string_ += *(argv + i);
 			}
 		}
+
 		if(string_.length()>0){
 			logHelper_	<< string_
 						<< endl;

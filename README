@@ -23,7 +23,7 @@ just the boot sector.
 
 Hence, I decided to come up with this program as my first
 open source software available publicly via GitHub. This works out
-well as part of project portfolio at the same time contributing
+well as part of a career portfolio at the same time contributing
 to the community. During the coding phrase the usage of the program
 turns out it possibly can be used more generically on a wider
 context rather than just the FAT filesystem.
@@ -55,15 +55,19 @@ knowledge I have currently.
 For now, $cd into coreutils and again make sure to build the
 package first. It has its own build instructions so I will
 leave it outside of this section. Return to fsDigger root
-directory after building of the coreutils package. Run the
-'build.sh' script and build should complete w/o problem.
+directory after building of the coreutils package. Run
+the following script:
+
+#./build.sh
+
+Build should complete w/o problem.
 Note that 'dd' will be compiled as a modified cource code
 by the script. Build has been done successfully on Linux/Debian
 distrubution buster suite.
 
 
 ***Disclaimer***
-There is no garauntee that this software will repair a corrupted
+There is no gaurantee that this software will repair a corrupted
 media device. However, there is no harm in using it since the device
 is already in an unusable state. Moreover, the software has
 a backup option to save the existing bad data to an image file

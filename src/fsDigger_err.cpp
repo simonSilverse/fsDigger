@@ -18,7 +18,7 @@ public:
 		,INVALID_IMAGE_SIZE = 2
 		,EXCEEDED_SECTOR_SLICE2 = 3
 		,ERR_BACKUP_DIR = 4
-		,ERR_DD_DIR = 5
+		,ERR_DD_FILE = 5
 		,ERR_FSI_LENGTH = 6
 		,ERR_FROM_DD = 50
 		,BAD_REG = 70
@@ -52,8 +52,8 @@ public:
 			case ERR_BACKUP_DIR:
 				logHelper_	<< "Problem encountered while creating backup directory.";
 				break;
-			case ERR_DD_DIR:
-				logHelper_	<< "Problem encountered while creating dd directory.";
+			case ERR_DD_FILE:
+				logHelper_	<< "Problem encountered while creating dd file.";
 				break;
 			case ERR_FROM_DD:
 				logHelper_	<< "An error has occured from fsDigger_static_compiled_dd.";

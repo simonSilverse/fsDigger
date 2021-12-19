@@ -6,7 +6,7 @@ public:
 
 	charConverter(){}
 
-	charConverter(char char_array[],int char_arrayLen,int mode=1){
+	charConverter(char char_array[], int char_arrayLen, int mode=1){
 		toHex(char_array,char_arrayLen);
 	}
 
@@ -19,6 +19,10 @@ public:
 		p_char = p_rhsObj->p_char;
 
 		return *this;
+	}
+
+	~charConverter(){
+		delete p_char;
 	}
 
 	char* const& toHex(char char_array[],int char_arrayLen){
@@ -55,9 +59,5 @@ public:
 		*(p_char + written_len) = '\0';
 
 		return p_char;
-	}
-
-	~charConverter(){
-		delete p_char;
 	}
 };
