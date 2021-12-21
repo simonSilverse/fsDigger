@@ -3,11 +3,11 @@
 set -e
 
 pkName=fsDigger;
-folder_build=build;
-mkdir --parents $folder_build
+build_dir=build;
+mkdir --parents $build_dir
 
 if [ $COREUTILS_TAG ]; then
-	$COREUTILS_DIR="coreutils_$COREUTILS_TAG"
+	COREUTILS_DIR="coreutils_$COREUTILS_TAG"
 	rm -rf $COREUTILS_DIR
 	mkdir --parents $COREUTILS_DIR
 	git clone --branch $COREUTILS_TAG https://github.com/coreutils/coreutils.git "$COREUTILS_DIR"
@@ -15,13 +15,13 @@ if [ $COREUTILS_TAG ]; then
 	./bootstrap
 	CFLAGS="-Wsuggest-attribute=malloc" ./configure
 	perl -i -p \
-		-e 's/WERROR_CFLAGS.*=.*/WERROR_CFLAGS =\n/s' \
+		-e 's/WERROR_CFLAGS.*=.*/WERROR_CFLAGS =/' \
 		./Makefile
 	make
 	cd ..
 fi
 
-mkdir --parents $COREUTILS_DIR/$folder_build
+mkdir --parents $COREUTILS_DIR/$build_dir
 
 perl -p \
 -e 's/ (write\s?\()/ fsDigger_$1/;' \
@@ -41,26 +41,27 @@ fileName=_dd; \
 gcc -Wall \
 -c \
 -I ./$COREUTILS_DIR/lib \
--o ./$COREUTILS_DIR/$folder_build/$fileName.o \
+-o ./$COREUTILS_DIR/$build_dir/$fileName.o \
 ./$COREUTILS_DIR/src/$fileName.c \
 && ar rcs \
-$COREUTILS_DIR/$folder_build/lib_dd.a \
-$COREUTILS_DIR/$folder_build/_dd.o
+$COREUTILS_DIR/$build_dir/lib_dd.a \
+$COREUTILS_DIR/$build_dir/_dd.o
 
 fileName=main; \
 g++ -Wall \
 -std=gnu++17 \
--o ./$folder_build/$fileName.o \
+-o ./$build_dir/$fileName.o \
 -c ./$fileName.cpp \
 && \
 g++ -Wall \
 -std=gnu++17 \
 -Wl,--allow-multiple-definition \
 -Wl,--library-path=./lib/,--library=pthread \
--o ./$folder_build/$pkName \
-./$folder_build/$fileName.o \
-./$COREUTILS_DIR/$folder_build/lib_dd.a \
+-o ./$build_dir/$pkName \
+./$build_dir/$fileName.o \
+./$COREUTILS_DIR/$build_dir/lib_dd.a \
 ./$COREUTILS_DIR/lib/libcoreutils.a	\
 ./$COREUTILS_DIR/src/libver.a
 
-echo "Build completed..."
+echo	"build_dir = $build_dir" \
+		"Build completed..."

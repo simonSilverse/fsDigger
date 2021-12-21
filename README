@@ -57,7 +57,7 @@ of this section. Return to fsDigger root directory after building
 of the coreutils package. Run either of the following codes:
 
 1)
-	## Get a fresh coreutils copy from GitHub and auto build
+	## Get a fresh coreutils from GitHub and auto build
 	# COREUTILS_TAG=v9.0 ./build.sh
 		OR
 2)
