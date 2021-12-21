@@ -19,7 +19,8 @@ public:
 	int readLen;
 	int minLvl = 1;
 
-	logHelper(int minLvl = 1) : stringstream(){
+	logHelper(int minLvl = 1)
+	: stringstream(){
 		locale locale_num;
 		char* LC_NUMERIC_ = getenv("LC_NUMERIC");
 		if(LC_NUMERIC_!=NULL){

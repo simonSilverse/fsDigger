@@ -1,5 +1,5 @@
-#ifndef _FSI_PURIFIER_ERROR
-#define _FSI_PURIFIER_ERROR	1
+#ifndef _FS_DIGGER_ERR
+#define _FS_DIGGER_ERR	1
 
 #include <string>
 #include "../includes/logHelper.cpp"
@@ -26,7 +26,7 @@ public:
 	};
 
 	fsDigger_err(int errnum, string info="")
-	:num(errnum), info(info){
+	: num(errnum), info(info){
 		get_error();
 	}
 

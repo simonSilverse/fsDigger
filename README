@@ -52,13 +52,22 @@ so this section will likely get an update in the future.
 The build procees is made as automated as possbile to what
 knowledge I have currently.
 
-For now, $cd into coreutils and again make sure to build the
-package first. It has its own build instructions so I will
-leave it outside of this section. Return to fsDigger root
-directory after building of the coreutils package. Run
-the following script:
+Coreutils has its own build instructions so I will leave it outside
+of this section. Return to fsDigger root directory after building
+of the coreutils package. Run either of the following codes:
 
-#./build.sh
+1)
+	## Get a fresh coreutils copy from GitHub and auto build
+	# COREUTILS_TAG=v9.0 ./build.sh
+		OR
+2)
+	## use existing coreutils build.
+	# COREUTILS_DIR=coreutils_v9.0 ./build.sh
+		OR
+3)
+	## same as number 2 but diff directory.
+	# COREUTILS_DIR=coreutils ./build.sh
+
 
 Build should complete w/o problem.
 Note that 'dd' will be compiled as a modified cource code

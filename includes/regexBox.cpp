@@ -21,7 +21,7 @@ public:
 	}
 
 	regexBox(string str_pattern, regex::flag_type f = regex_constants::ECMAScript | regex_constants::icase)
-	:	regexBox(str_pattern.c_str(),f)
+	: regexBox(str_pattern.c_str(),f)
 	{}
 
 	int regex_single_hd(const char cmp_char_array[], int size){

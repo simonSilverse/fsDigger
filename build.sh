@@ -1,9 +1,27 @@
 #!/bin/bash
 
+set -e
+
 pkName=fsDigger;
 folder_build=build;
-mkdir --parents $folder_build coreutils/$folder_build
-echo "build_dir=$folder_build"
+mkdir --parents $folder_build
+
+if [ $COREUTILS_TAG ]; then
+	$COREUTILS_DIR="coreutils_$COREUTILS_TAG"
+	rm -rf $COREUTILS_DIR
+	mkdir --parents $COREUTILS_DIR
+	git clone --branch $COREUTILS_TAG https://github.com/coreutils/coreutils.git "$COREUTILS_DIR"
+	cd $COREUTILS_DIR
+	./bootstrap
+	CFLAGS="-Wsuggest-attribute=malloc" ./configure
+	perl -i -p \
+		-e 's/WERROR_CFLAGS.*=.*/WERROR_CFLAGS =\n/s' \
+		./Makefile
+	make
+	cd ..
+fi
+
+mkdir --parents $COREUTILS_DIR/$folder_build
 
 perl -p \
 -e 's/ (write\s?\()/ fsDigger_$1/;' \
@@ -11,22 +29,23 @@ perl -p \
 -e 's/^(int )?main\s?\(/$1dd_main (/;' \
 -e 's/static (.*(ibuf|input_file|obuf|output_file|r_full|w_full|w_bytes|w_partial|seek_bytes|seek_records))/$1/;' \
 -e 's/(\W)STDOUT_FILENO/$1DD_STDOUT_FILENO/;' \
-coreutils/src/dd.c \
+$COREUTILS_DIR/src/dd.c \
 | perl -p -0 \
 -e 's@#include.*"system.h"@$&\n#include "../../src/fsDigger.h"@;' \
--e 's/(static.void.(cleanup))(.*?{\R)(.*?)\R{2}(.*?)}/$1_in$3$4\n}\n\n$1_out$3$5\n}\n\n$1$3 $2_in();\n $2_out();\n}/s;' \
+-e 's/(static.void.(cleanup))(.*?{)(.*?\R)(\R.*?)\R(\R.*?if.*?)}/$1_in$3$5\n}\n\n$1_out$3$6\n}\n\n$1$3$4 $2_in();\n $2_out();\n}/s;' \
 -e 's/static.(void.(finish_up|cleanup_in|cleanup_out|print_stats|process_signals))/$1/sg;'\
-> coreutils/src/_dd.c
+> $COREUTILS_DIR/src/_dd.c
+#-e 's/(static.void.(cleanup))(.*?{\R)(.*?)\R{2}(.*?)}/$1_in$3$4\n}\n\n$1_out$3$5\n}\n\n$1$3 $2_in();\n $2_out();\n}/s;' \
 
 fileName=_dd; \
 gcc -Wall \
 -c \
--I ./coreutils/lib \
--o ./coreutils/build/$fileName.o \
-./coreutils/src/$fileName.c \
+-I ./$COREUTILS_DIR/lib \
+-o ./$COREUTILS_DIR/$folder_build/$fileName.o \
+./$COREUTILS_DIR/src/$fileName.c \
 && ar rcs \
-coreutils/build/lib_dd.a \
-coreutils/build/_dd.o
+$COREUTILS_DIR/$folder_build/lib_dd.a \
+$COREUTILS_DIR/$folder_build/_dd.o
 
 fileName=main; \
 g++ -Wall \
@@ -40,8 +59,8 @@ g++ -Wall \
 -Wl,--library-path=./lib/,--library=pthread \
 -o ./$folder_build/$pkName \
 ./$folder_build/$fileName.o \
-./coreutils/build/lib_dd.a \
-./coreutils/lib/libcoreutils.a	\
-./coreutils/src/libver.a
+./$COREUTILS_DIR/$folder_build/lib_dd.a \
+./$COREUTILS_DIR/lib/libcoreutils.a	\
+./$COREUTILS_DIR/src/libver.a
 
 echo "Build completed..."
