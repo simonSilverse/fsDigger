@@ -11,7 +11,7 @@
 #include "../includes/charConverter.cpp"
 
 class fsDigger{
-	int shared_multiplier = 1;
+	int shared_ratio = 1;
 	static const ulong cmpSize = 512;
 	char null_array[cmpSize];
 	ulong fsi_sectorLenMax;
@@ -52,6 +52,7 @@ public:
 
 	ulong index_sector_fsi1 = 0;
 	ulong index_sector_fsi2 = 0;
+	ulong index_sector_notNullMax = 0;
 	inline static fsDigger* p_self = NULL;
 
 	logHelper logHelper_;
@@ -100,7 +101,10 @@ public:
 					 * 		-index_sector_fsi1
 					*/
 				case 6 :
-					createNotNullImage(lastNotNull_sector_hd());
+					if(index_sector_notNullMax==0){
+						index_sector_notNullMax = lastNotNull_sector_hd();
+					}
+					createNotNullImage(index_sector_notNullMax);
 					break;
 				default :
 					examFSI_hd();
@@ -116,12 +120,13 @@ public:
 		ulong sectorSize = sectorNum - index_sector_fsi1;
 		string backupDir = backupDir_hd();
 		string backupFileName = backupDir + "/" +
-								to_string(index_sector_fsi1) + "-" + to_string(sectorNum) + ".fsip.img";
+								to_string(index_sector_fsi1) + "-" + to_string(sectorNum) + ".fsDigger.img";
 
-		logHelper_	<< "Creating image of sector amount = " << sectorNum << " to " << backupFileName
-					<< endl << "This may take quite an amount of time depending on the image size..."
-					<< endl;
-		logHelper_.out_hd(1);
+		logHelper_.out_hd(1,[&]()->void{
+			logHelper_	<< "Creating image of sector amount = " << sectorNum << " to " << backupFileName
+						<< endl << "This may take quite an amount of time depending on the image size..."
+						<< endl;
+		});
 
 		//dd_multiplier(128);
 		dd_multiplier(dd_countMax);
@@ -133,12 +138,13 @@ public:
 		);
 		dd_hd(dd_argc_backup,argv3,NULL);
 
-		logHelper_	<< "Creating image completed, check using:"
-					<< endl << "dd if=" << backupFileName << " bs=512 count=2 \\"
-					<< endl << "skip=$((" << to_string(sectorSize) << "*512)) \\"
-					<< endl << "iflag=skip_bytes status=none | hexdump -C "
-					<< endl;
-		logHelper_.out_hd(1);
+		logHelper_.out_hd(1,[&]()->void{
+			logHelper_	<< "Creating image completed, check using:"
+						<< endl << "dd if=" << backupFileName << " bs=512 count=2 \\"
+						<< endl << "skip=$((" << to_string(sectorSize) << "*512)) \\"
+						<< endl << "iflag=skip_bytes status=none | hexdump -C "
+						<< endl;
+		});
 	}
 
 	int examFSI_hd(){
@@ -149,9 +155,10 @@ public:
 			return 0;
 		}
 		else{
-			logHelper_	<< "FSI not found..."
-						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< "FSI not found..."
+							<< endl;
+			});
 
 			return 1;
 		}
@@ -165,12 +172,14 @@ public:
 				dd_count = fsi_sectorLenMax;
 			}
 			dd_countByte = dd_count * dd_bs;
-			logHelper_	<< i << ") "
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< i << ") "
 						<< "Trying FSI len = " << fsi_sectorLenMax
 						<< " (" << (fsi_sectorLenMax * dd_bs) << ") "
 						<< "with count = " << dd_count
 						<< endl;
-			logHelper_.out_hd(1);
+				
+			});
 
 			if(pickSlice2Sectors()==0){
 				return 0;
@@ -206,9 +215,10 @@ public:
 
 			dd_arg_dyn_hd(argv1,index_sector_fsi2,dd_count);
 			dd_hd(dd_argc_exam,argv1,imageSlice2_char_array);
-			logHelper_	<< "\tPicking image slice 2 sector = " << index_sector_fsi2
-						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< "\tPicking image slice 2 sector = " << index_sector_fsi2
+							<< endl;
+			});
 			if(pickSlice1Sectors()==0){
 				return 0;
 			}
@@ -265,14 +275,15 @@ public:
 					index_sector_fsi2 += slice2_variance;
 					backup_lessNum = index_sector_fsi2;
 
-					logHelper_	<< endl << "\tSector difference = " << get_fsi_sectorLen()
-								<< endl << "\tMatching:"
-								<< endl << logHelper_.chunk(
-												charConverter_.toHex(cmp2_char_array,cmpSize)
-												,32 * 2
-											)
-								<< endl;
-					logHelper_.out_hd(1);
+					logHelper_.out_hd(1,[&]()->void{
+						logHelper_	<< endl << "\tSector difference = " << get_fsi_sectorLen()
+									<< endl << "\tMatching:"
+									<< endl << logHelper_.chunk(
+													charConverter_.toHex(cmp2_char_array,cmpSize)
+													,32 * 2
+												)
+									<< endl;
+					});
 
 					return 0;
 				}
@@ -304,18 +315,20 @@ public:
 		}
 		dd_countByte = dd_count * dd_bs;
 
-		logHelper_	<< "Comparing sectors with count = " << dd_count
-					<< endl;
-		logHelper_.out_hd(1);
+		logHelper_.out_hd(1,[&]()->void{
+			logHelper_	<< "Comparing sectors with count = " << dd_count
+						<< endl;
+		});
 
 		// Starting from 2nd sector of specimen since first matching has already been found. 
 		for(i=1; i<fsDigger_specimen_.get_size(); i+=dd_count){
 			skip_sector_fsi1 = i + index_sector_fsi1;
 			skip_sector_fsi2 = i + index_sector_fsi2;
 			
-			logHelper_	<< "Sectors begining = " << skip_sector_fsi2 << " (" << (skip_sector_fsi2 * dd_bs) << ")~"
-						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< "Sectors begining = " << skip_sector_fsi2 << " (" << (skip_sector_fsi2 * dd_bs) << ")~"
+							<< endl;
+			});
 
 			dd_arg_dyn_hd(argv1,skip_sector_fsi1,dd_count);
 			dd_hd(dd_argc_exam,argv1,imageSlice1_char_array);
@@ -328,12 +341,13 @@ public:
 			}
 		}
 
-		logHelper_	<< "Number of different sectors in " << cmpSize  << " bytes"
-					<< " = " << fsDigger_specimen_.get_len()
-					<< endl << "Sectors different:"
-					<< endl << '\t' << fsDigger_specimen_.chunk(&logHelper_,10)
-					<< endl;
-		logHelper_.out_hd(1);
+		logHelper_.out_hd(1,[&]()->void{
+			logHelper_	<< "Number of different sectors in " << cmpSize  << " bytes"
+						<< " = " << fsDigger_specimen_.get_len()
+						<< endl << "Sectors different:"
+						<< endl << '\t' << fsDigger_specimen_.chunk(&logHelper_,10)
+						<< endl;
+		});
 	}
 
 	int cmpSpecimenDiff(ulong sectorNum, fsDigger_specimen& fsDigger_specimen_){
@@ -362,7 +376,7 @@ public:
 				fsDigger_specimen_.regex_hd(cmp2_char_array,sectorNum2,&logHelper_);
 				if(toBackup&&sectorNum<backup_lessNum){
 					backupDir = backupDir_hd();
-					backupFileName = backupDir + "/" + to_string(sectorNum) + ".fsip.img";
+					backupFileName = backupDir + "/" + to_string(sectorNum) + ".fsDigger.img";
 					dd_arg_backup_hd(
 						argv3
 						,sectorNum
@@ -371,9 +385,10 @@ public:
 					);
 					dd_hd(dd_argc_backup,argv3,NULL);
 
-					logHelper_	<< "Backup saved to " << backupFileName
-								<< endl;
-					logHelper_.out_hd(1);
+					logHelper_.out_hd(1,[&]()->void{
+						logHelper_	<< "Backup saved to " << backupFileName
+									<< endl;
+					});
 
 					if(toReflect){
 						dd_arg_reflect_hd(
@@ -385,9 +400,10 @@ public:
 						);
 						dd_hd(dd_argc_reflect,argv4,NULL);
 
-						logHelper_	<< "Reflected sector " << sectorNum2 << " to " << sectorNum
-									<< endl;
-						logHelper_.out_hd(1);
+						logHelper_.out_hd(1,[&]()->void{
+							logHelper_	<< "Reflected sector " << sectorNum2 << " to " << sectorNum
+										<< endl;
+						});
 					}
 				}
 			}
@@ -426,9 +442,10 @@ public:
 
 		make_dd_argv_fixed(argv2);
 		dd_multiplier(dd_countMax);
-		logHelper_	<< "Searching for lastNotNull sector:"
-					<< endl;
-		logHelper_.out_hd(1);
+		logHelper_.out_hd(1,[&]()->void{
+			logHelper_	<< "Searching for lastNotNull sector:"
+						<< endl;
+		});
 		dd_count = dd_countMax;
 		dd_countByte = dd_count * dd_bs;
 		for(i=dd_if_sectorMax-dd_count; i>=0; i-=dd_count){
@@ -445,9 +462,10 @@ public:
 		}
 
 		if(lastNotNull_sector==0){
-			logHelper_	<< "Last not null " << cmpSize << " bytes not found."
-						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< "Last not null " << cmpSize << " bytes not found."
+							<< endl;
+			});
 		}
 
 		return lastNotNull_sector;
@@ -471,14 +489,15 @@ public:
 			}
 
 			lastNotNull = index_sector_fsi2 + floor(n/dd_bs);
-			logHelper_	<< "Last not null " << cmpSize << " bytes at sector = " << lastNotNull << " (" << (lastNotNull * dd_bs) << ")"
-						<< endl << "\tMatching:"
-						<< endl << logHelper_.chunk(
-										charConverter_.toHex(cmp_char_array,cmpSize)
-										,32 * 2
-									)
-						<< endl;
-			logHelper_.out_hd(1);
+			logHelper_.out_hd(1,[&]()->void{
+				logHelper_	<< "Last not null " << cmpSize << " bytes at sector = " << lastNotNull << " (" << (lastNotNull * dd_bs) << ")"
+							<< endl << "\tMatching:"
+							<< endl << logHelper_.chunk(
+											charConverter_.toHex(cmp_char_array,cmpSize)
+											,32 * 2
+										)
+							<< endl;
+			});
 
 			return lastNotNull;
 		}
@@ -540,8 +559,8 @@ public:
 
 		int i = dd_argv_dyn_pos;
 
-		arg_bs = "bs=" + to_string(dd_bs * shared_multiplier);
-		arg_count = "count=" + to_string((long) ceil((long double) count / shared_multiplier));
+		arg_bs = "bs=" + to_string(dd_bs * shared_ratio);
+		arg_count = "count=" + to_string((long) ceil((long double) count / shared_ratio));
 		arg_skip = "skip=" + to_string(dd_bs * skip_sector);
 
 		strncpy(
@@ -612,10 +631,10 @@ public:
 		return i;
 	}
 
-	void dd_multiplier(int shared_multiplier){
-		if(this->shared_multiplier<shared_multiplier){
+	void dd_multiplier(int shared_ratio){
+		if(this->shared_ratio<shared_ratio){
 			/*
-			* Appearantly cannot free existing dd pointer.
+			* Appearantly cannot free existing pointer in dd.
 			* Likely due to pointer not a reference to the original pointer at function local context.
 			* Not modifying existing implementation.
 			* Should not be a big problem since usage of this program rarely occurs.
@@ -629,10 +648,11 @@ public:
 			*/
 			ibuf = NULL;
 			obuf = NULL;
-			this->shared_multiplier = shared_multiplier;
-			logHelper_	<< "More resources to be allocated by dd, setting shared_multiplier = " << shared_multiplier
-						<< endl;
-			logHelper_.out_hd(0);
+			this->shared_ratio = shared_ratio;
+			logHelper_.out_hd(0,[&]()->void{
+				logHelper_	<< "More resources to be allocated by dd, setting shared_ratio = " << shared_ratio
+							<< endl;
+			});
 		}
 	}
 
@@ -727,6 +747,7 @@ public:
 };
 
 ssize_t fsDigger_write(int fd, char const* buf, size_t size){
+	// ssize_t (fsDigger::* p_write)(int fd, char const *buf, size_t size) = &fsDigger::write;
 	static size_t& dd_writtenSize = fsDigger::getRef_dd_writtenSize();
 	static char* const& p_imageSlice_char = fsDigger::getRef_p_imageSlice_char();
 
@@ -748,15 +769,18 @@ ssize_t fsDigger_write(int fd, char const* buf, size_t size){
 void fsDigger_finish_up(void){
 	/*
 	 * 
-	 * Appearantly not necessary most likely due to workings of C vs CPP compilers.
+	 * Apparantly not necessary most likely due to workings of C vs CPP compilers.
 	 * Enabling it will cause error at part of execution.
 	 * Anyways, resources will be automatically freed at end of program.
 	 * 
 	 * static char* const& p_imageSlice_char = fsDigger::getRef_p_imageSlice_char();
+	 * process_signals ();
+	 * cleanup_in ();
 	 * cleanup_out();
+	 * print_stats ();
 	*/
 
+	process_signals ();
 	cleanup_in ();
 	print_stats ();
-	process_signals ();
 }

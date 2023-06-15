@@ -35,7 +35,8 @@ $COREUTILS_DIR/src/dd.c \
 -e 's/(static.void.(cleanup))(.*?{)(.*?\R)(\R.*?)\R(\R.*?if.*?)}/$1_in$3$5\n}\n\n$1_out$3$6\n}\n\n$1$3$4 $2_in();\n $2_out();\n}/s;' \
 -e 's/static.(void.(finish_up|cleanup_in|cleanup_out|print_stats|process_signals))/$1/sg;'\
 > $COREUTILS_DIR/src/_dd.c
-#-e 's/(static.void.(cleanup))(.*?{\R)(.*?)\R{2}(.*?)}/$1_in$3$4\n}\n\n$1_out$3$5\n}\n\n$1$3 $2_in();\n $2_out();\n}/s;' \
+# Bottom for v8.30
+# -e 's/(static.void.(cleanup))(.*?{\R)(.*?)\R{2}(.*?)}/$1_in$3$4\n}\n\n$1_out$3$5\n}\n\n$1$3 $2_in();\n $2_out();\n}/s;' \
 
 fileName=_dd; \
 gcc -Wall \
@@ -63,5 +64,5 @@ g++ -Wall \
 ./$COREUTILS_DIR/lib/libcoreutils.a	\
 ./$COREUTILS_DIR/src/libver.a
 
-echo	"build_dir = $build_dir" \
-		"Build completed..."
+echo	"Build_dir = $build_dir"
+echo	"Build completed..."

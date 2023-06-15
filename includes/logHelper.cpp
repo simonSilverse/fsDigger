@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <functional>
 
 using namespace std;
 class logHelper_blank{};
@@ -30,25 +31,36 @@ public:
 		this->minLvl = minLvl;
 	}
 
-	void out_hd(int lvl){
-		if(lvl>=minLvl){
-			while(true){
-				read(info_cArray,info_cArrayLen);
-				readLen = gcount();
-				if(readLen==0){
-					break;
-				}
-
-				fwrite(
-					info_cArray
-					,readLen
-					,1
-					,stdout
-				);
+	void out_hd(){
+		while(true){
+			read(info_cArray,info_cArrayLen);
+			readLen = gcount();
+			if(readLen==0){
+				break;
 			}
+
+			fwrite(
+				info_cArray
+				,readLen
+				,1
+				,stdout
+			);
 		}
 
 		*this = logHelper(minLvl);
+	}
+
+	void out_hd(int lvl){
+		if(lvl>=minLvl){
+			out_hd();
+		}
+	}
+
+	void out_hd(int lvl, function<void()> callback_hd){
+		if(lvl>=minLvl){
+			callback_hd();
+			out_hd();
+		}
 	}
 
 	void debug_out(){

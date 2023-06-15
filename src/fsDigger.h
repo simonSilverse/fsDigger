@@ -43,7 +43,7 @@
 	void fsDigger_finish_up(void);
 	// void finish_up(void);
 	void cleanup_in(void);
-	void cleanup_out(void);
+	// void cleanup_out(void);
 	void print_stats(void);
 	void process_signals(void);
 #ifdef __cplusplus

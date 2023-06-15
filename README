@@ -76,7 +76,7 @@ distrubution buster suite.
 
 
 ***Disclaimer***
-There is no gaurantee that this software will repair a corrupted
+There is no certainty that this software will repair a corrupted
 media device. However, there is no harm in using it since the device
 is already in an unusable state. Moreover, the software has
 a backup option to save the existing bad data to an image file
@@ -94,10 +94,15 @@ None at the moment
 Email: simon.omni.acc@gmail.com
 
 
+***License***
+Software package comes with a license described in ./LICENSE file.
+
+
 ***Links***
 GitHub Pages (none currently):
 	https = https://simonSilverse.github.io/fsDigger
 Source code:
-	https = https://github.com/simonSilverse/fsDigger.git
-	ssh = ssh://git@github.com:simonSilverse/fsDigger.git
-	cli = gh repo clone simonSilverse/fsDigger
+	https https://github.com/simonSilverse/fsDigger.git
+	ssh ssh://git@github.com:simonSilverse/fsDigger.git
+	cli #gh repo clone simonSilverse/fsDigger
+	cli #tag="v1.1.1"; git clone --branch $tag https://github.com/simonSilverse/fsDigger.git "coreutils_$tag"

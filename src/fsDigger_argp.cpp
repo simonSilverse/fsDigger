@@ -31,7 +31,7 @@ static struct argp_option argp_option_[] = {
 	}
 	,{"offset",'o',"4",OPTION_ARG_OPTIONAL
 		,"Specify sector number to start from. " \
-		"\nExam mode applicable."
+		"\nExam mode applicable. "
 	}
 	,{"skip",'s',"4",OPTION_ALIAS}
 	,{"rootPlus",'r',"2",OPTION_ARG_OPTIONAL
@@ -45,7 +45,7 @@ static struct argp_option argp_option_[] = {
 		,OPTION_ARG_OPTIONAL
 		,"\nSpecify pattern use to format the output of root directory. " \
 		"\nChar is not case sensitive and should have compatibility with ECMAScript. " \
-		"\nCompare mode applicable."
+		"\nCompare mode applicable. "
 	}
 	,{"pa_nonMatching"
 		,'n'
@@ -66,26 +66,31 @@ static struct argp_option argp_option_[] = {
 		"\nRequires '--backup' to be enabled. " \
 		"\nCompare mode applicable. "
 	}
-	,{"fsi1",'y',"0",OPTION_ARG_OPTIONAL
+	,{"fsi1",'x',"0",OPTION_ARG_OPTIONAL
 		,"Specify sector number of the 1st FSI. " \
 		"\nExam mode not applicable. "
 	}
-	,{"fsi2",'z',"0",OPTION_ARG_OPTIONAL
+	,{"fsi2",'y',"0",OPTION_ARG_OPTIONAL
 		,"Specify sector number of the 2nd FSI. " \
 		"\nExam mode not applicable. "
 	}
+	,{"notNullNum",'z',"0",OPTION_ARG_OPTIONAL
+		,"Specify sector number of last not null. " \
+		"\nDefault comes with mode 4 prior execution. " \
+		"\nCreate mode applicable. "
+	}
 	,{"log",'l',"1",OPTION_ARG_OPTIONAL
-		,"Specify verbosity level."
+		,"Specify verbosity level. "
 	}
 	,{"quiet",'q',0,0
-		,"Specify verbosity level=2."
+		,"Specify verbosity level=2. "
 	}
 	,{0}	// ***Required, do not remove...
 };
 
 static error_t option_parser(int key, char* argv, struct argp_state* argp_state_){
-	//struct arguments* arguments_ = argp_state_->input;
-	//fsDigger* fsDigger_ =  argp_state_->input;
+	// struct arguments* arguments_ = argp_state_->input;
+	// fsDigger* fsDigger_ =  argp_state_->input;
 	stringstream ss_;
 	ss_ << argv;
 
@@ -118,11 +123,14 @@ static error_t option_parser(int key, char* argv, struct argp_state* argp_state_
 		case 'u' :
 			ss_ >> fsDigger::p_self->toReflect;
 			break;
-		case 'y' :
+		case 'x' :
 			ss_ >> fsDigger::p_self->index_sector_fsi1;
 			break;
-		case 'z' :
+		case 'y' :
 			ss_ >> fsDigger::p_self->index_sector_fsi2;
+			break;
+		case 'z' :
+			ss_ >> fsDigger::p_self->index_sector_notNullMax;
 			break;
 		case 'l' :
 			ss_ >> fsDigger::p_self->logHelper_.minLvl;
